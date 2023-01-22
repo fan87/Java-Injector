@@ -4,6 +4,7 @@ cmake-build-debug/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+hs_err**
 
 ### IntelliJ IDEA ###
 **/.idea/

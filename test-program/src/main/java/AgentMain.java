@@ -14,6 +14,10 @@ import java.security.ProtectionDomain;
 
 public class AgentMain {
 
+    public static void test() {
+        System.out.println("Test Method Called");
+    }
+
     public static void main(String[] args) throws Exception {
         agentmain("Test Args", new NativeInstrumentation());
     }
@@ -22,6 +26,7 @@ public class AgentMain {
         assert agentArgs.equals("Test Args");
         System.out.println("Hello, World! " + agentArgs);
         NativeInstrumentation.init();
+        NativeInstrumentation.invokeStaticMethodS(AgentMain.class, "test", "()V");
         final int[] times = {0};
         final byte[][] data = new byte[1][1];
         instrumentation.addTransformer(new ClassFileTransformer() {

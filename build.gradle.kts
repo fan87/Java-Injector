@@ -2,6 +2,7 @@ import java.io.File
 
 plugins {
     id("java")
+    id("maven-publish")
 }
 
 group = "me.fan87"
@@ -60,20 +61,15 @@ tasks {
         dependsOn("copyNativeAgent")
     }
 
-//    register<JavaExec>("testInjection") {
-//        dependsOn(":test-inject-target:classes")
-//        dependsOn(":test-program:build")
-//
-//        doFirst {
-//            javaexec {
-//                classpath = files(*project(":test-inject-target").configurations.compileClasspath.map { it.files }.get().toTypedArray())
-//                mainClass.set("Main")
-//            }
-//        }
-//
-//        classpath = files(project(":test-program").tasks.jar.get().archiveFile.get().asFile)
-//        mainClass.set("InjectorMain")
-//        args()
-//    }
+}
 
+
+
+
+publishing {
+    publications {
+        register<MavenPublication>("mavenJava") {
+            from(components.getByName("java"))
+        }
+    }
 }

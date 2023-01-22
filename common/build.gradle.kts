@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
 }
 
 group = "me.fan87"
@@ -16,4 +17,12 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("mavenJava") {
+            from(components.getByName("java"))
+        }
+    }
 }

@@ -1,4 +1,5 @@
 plugins {
+    id("maven-publish")
     id("java")
 }
 
@@ -11,4 +12,12 @@ repositories {
 
 dependencies {
     implementation(rootProject.project(":common"))
+}
+
+publishing {
+    publications {
+        register<MavenPublication>("mavenJava") {
+            from(components.getByName("java"))
+        }
+    }
 }

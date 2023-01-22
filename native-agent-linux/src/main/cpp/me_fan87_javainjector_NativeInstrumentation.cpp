@@ -1,6 +1,7 @@
 #include <cstring>
 #include "me_fan87_javainjector_NativeInstrumentation.h"
 #include "jvmti.h"
+#include "type_convert.h"
 
 
 
@@ -586,7 +587,117 @@ Java_me_fan87_javainjector_NativeInstrumentation_setNativeMethodPrefixes(JNIEnv 
         }
         deallocate(jvmtienv, (void*)prefixes);
         deallocate(jvmtienv, (void*)originForRelease);
+        
+        
     }
 }
 
+jfieldID findField(JNIEnv *env, jclass clazz, jstring fieldName, char** signature) {
+    const char *fName = env->GetStringUTFChars(fieldName, nullptr);
+    jint count;
+    jfieldID *fields;
 
+    createAndThrowThrowableFromJVMTIErrorCode(env, jvmti1->GetClassFields(clazz, &count, &fields));
+
+    for (int i = 0; i < count; i++) {
+        jfieldID id = fields[i];
+        char *name;
+        jvmti1->GetFieldName(clazz, id, &name, signature, nullptr);
+
+        if (strcmp(name, fName) == 0) {
+            env->ReleaseStringUTFChars(fieldName, fName);
+            return id;
+        }
+    }
+
+    env->ReleaseStringUTFChars(fieldName, fName);
+    return nullptr;
+}
+
+JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getField
+        (JNIEnv * env, jclass thisClass, jclass clazz, jobject classInstance, jstring fieldName) {
+    char *signature;
+    jfieldID id = findField(env, clazz, fieldName, &signature);
+    if (id == nullptr) {
+        return nullptr;
+    }
+    return getField(env, id, classInstance, signature);
+}
+
+JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getStaticField
+        (JNIEnv * env, jclass thisClass, jclass clazz, jstring fieldName) {
+    char *signature;
+    jfieldID id = findField(env, clazz, fieldName, &signature);
+    if (id == nullptr) {
+        return nullptr;
+    }
+    return getStaticField(env, id, clazz, signature);
+}
+
+JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setField
+        (JNIEnv * env, jclass thisClass, jclass clazz, jobject classInstance, jstring fieldName, jobject value) {
+    char *signature;
+    jfieldID id = findField(env, clazz, fieldName, &signature);
+    if (id == nullptr) {
+        return;
+    }
+    setField(env, id, classInstance, value, signature);
+}
+
+JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setStaticField
+        (JNIEnv * env, jclass thisClass, jclass clazz, jstring fieldName, jobject value) {
+    char *signature;
+    jfieldID id = findField(env, clazz, fieldName, &signature);
+    if (id == nullptr) {
+        return;
+    }
+    setStaticField(env, id, clazz, value, signature);
+}
+
+jobject
+Java_me_fan87_javainjector_NativeInstrumentation_invokeMethodS(JNIEnv *env, jclass thisClass, jclass clazz, jobject classInstance, jstring methodName, jstring signature, jobjectArray args) {
+    const char* mName = env->GetStringUTFChars(methodName, nullptr);
+    const char* mSig = env->GetStringUTFChars(signature, nullptr);
+    jmethodID id = env->GetMethodID(clazz, mName, mSig);
+    if (id == nullptr) {
+        env->ReleaseStringUTFChars(methodName, mName);
+        env->ReleaseStringUTFChars(signature, mSig);
+        return nullptr;
+    }
+
+    jsize length = env->GetArrayLength(args);
+    auto *objects = (jobject*) malloc(length * sizeof(jobject));
+    for (int i = 0; i < length; i++) {
+        objects[i] = env->GetObjectArrayElement(args, i);
+    }
+
+    jobject returnValue = callMethod(env, id, classInstance, objects, length, (char*) mSig);
+    free(objects);
+    env->ReleaseStringUTFChars(methodName, mName);
+    env->ReleaseStringUTFChars(signature, mSig);
+    return returnValue;
+}
+
+jobject
+Java_me_fan87_javainjector_NativeInstrumentation_invokeStaticMethodS(JNIEnv *env, jclass thisClass, jclass clazz, jstring methodName, jstring signature, jobjectArray args) {
+    const char* mName = env->GetStringUTFChars(methodName, nullptr);
+    const char* mSig = env->GetStringUTFChars(signature, nullptr);
+    jmethodID id = env->GetStaticMethodID(clazz, mName, mSig);
+    if (id == nullptr) {
+        env->ReleaseStringUTFChars(methodName, mName);
+        env->ReleaseStringUTFChars(signature, mSig);
+        return nullptr;
+    }
+
+    jsize length = env->GetArrayLength(args);
+    auto *objects = (jobject*) malloc(length * sizeof(jobject));
+    for (int i = 0; i < length; i++) {
+        objects[i] = env->GetObjectArrayElement(args, i);
+    }
+
+    jobject returnValue = callStaticMethod(env, id, clazz, objects, length, (char*) mSig);
+    free(objects);
+    env->ReleaseStringUTFChars(methodName, mName);
+    env->ReleaseStringUTFChars(signature, mSig);
+    return returnValue;
+}

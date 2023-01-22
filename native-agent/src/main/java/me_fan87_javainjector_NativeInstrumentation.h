@@ -8,52 +8,13 @@
 extern "C" {
 #endif
 /*
-* Class:     me_fan87_javainjector_JNIBinding
-* Method:    getField
-* Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
-*/
-JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_JNIBinding_getField
-        (JNIEnv *, jclass, jclass, jobject, jstring);
-
-/*
- * Class:     me_fan87_javainjector_JNIBinding
- * Method:    getStaticField
- * Signature: (Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Object;
+ * Class:     me_fan87_javainjector_NativeInstrumentation
+ * Method:    init
+ * Signature: ()V
  */
-JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_JNIBinding_getStaticField
-        (JNIEnv *, jclass, jclass, jstring);
+JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_init
+  (JNIEnv *, jclass);
 
-/*
- * Class:     me_fan87_javainjector_JNIBinding
- * Method:    setField
- * Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V
- */
-JNIEXPORT void JNICALL Java_me_fan87_javainjector_JNIBinding_setField
-        (JNIEnv *, jclass, jclass, jobject, jstring, jobject);
-
-/*
- * Class:     me_fan87_javainjector_JNIBinding
- * Method:    setStaticField
- * Signature: (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V
- */
-JNIEXPORT void JNICALL Java_me_fan87_javainjector_JNIBinding_setStaticField
-        (JNIEnv *, jclass, jclass, jstring, jobject);
-
-/*
- * Class:     me_fan87_javainjector_JNIBinding
- * Method:    invokeMethodS
- * Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;
- */
-JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_JNIBinding_invokeMethodS
-        (JNIEnv *, jclass, jclass, jobject, jstring, jstring, jobjectArray);
-
-/*
- * Class:     me_fan87_javainjector_JNIBinding
- * Method:    invokeStaticMethodS
- * Signature: (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;
- */
-JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_JNIBinding_invokeStaticMethodS
-        (JNIEnv *, jclass, jclass, jstring, jstring, jobjectArray);
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
  * Method:    isModifiableClass0
@@ -126,16 +87,13 @@ JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_appendTo
 JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setNativeMethodPrefixes
   (JNIEnv *, jclass, jobjectArray, jboolean);
 
-JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_init
-        (JNIEnv *, jclass);
-
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
  * Method:    getField
  * Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getField
-        (JNIEnv *, jclass, jclass, jobject, jstring);
+  (JNIEnv *, jclass, jclass, jobject, jstring);
 
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
@@ -143,7 +101,7 @@ JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getFi
  * Signature: (Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getStaticField
-        (JNIEnv *, jclass, jclass, jstring);
+  (JNIEnv *, jclass, jclass, jstring);
 
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
@@ -151,7 +109,7 @@ JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_getSt
  * Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;)V
  */
 JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setField
-        (JNIEnv *, jclass, jclass, jobject, jstring, jobject);
+  (JNIEnv *, jclass, jclass, jobject, jstring, jobject);
 
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
@@ -159,7 +117,7 @@ JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setField
  * Signature: (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/Object;)V
  */
 JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setStaticField
-        (JNIEnv *, jclass, jclass, jstring, jobject);
+  (JNIEnv *, jclass, jclass, jstring, jobject);
 
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
@@ -167,7 +125,7 @@ JNIEXPORT void JNICALL Java_me_fan87_javainjector_NativeInstrumentation_setStati
  * Signature: (Ljava/lang/Class;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_invokeMethodS
-        (JNIEnv *, jclass, jclass, jobject, jstring, jstring, jobjectArray);
+  (JNIEnv *, jclass, jclass, jobject, jstring, jstring, jobjectArray);
 
 /*
  * Class:     me_fan87_javainjector_NativeInstrumentation
@@ -175,7 +133,7 @@ JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_invok
  * Signature: (Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_me_fan87_javainjector_NativeInstrumentation_invokeStaticMethodS
-        (JNIEnv *, jclass, jclass, jstring, jstring, jobjectArray);
+  (JNIEnv *, jclass, jclass, jstring, jstring, jobjectArray);
 
 #ifdef __cplusplus
 }

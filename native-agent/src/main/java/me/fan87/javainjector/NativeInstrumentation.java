@@ -125,8 +125,6 @@ public class NativeInstrumentation implements Instrumentation {
     @SuppressWarnings("rawtypes")
     public Class[]
     getAllLoadedClasses() {
-        System.out.println("Getting...");
-        System.out.println("Size: " + getAllLoadedClasses0().length);
         return getAllLoadedClasses0();
     }
 
@@ -403,28 +401,20 @@ public class NativeInstrumentation implements Instrumentation {
     private static List<TransformerManager> managers = new ArrayList<>();
     private static List<TransformerManager> retransformManagers = new ArrayList<>();
 
+
+    public static byte[] tmpTransformOutput = null;
+
     // WARNING: the static native code knows the name & signature of this method
-    private static byte[]
+    private synchronized static void
     transform(ClassLoader loader,
               String classname,
               Class<?> classBeingRedefined,
               ProtectionDomain protectionDomain,
               byte[] classfileBuffer) {
-        byte[] bufferToUse = classfileBuffer;
-        boolean modified = false;
-        for (TransformerManager manager : retransformManagers) {
-            byte[] out = manager.transform(loader,
-                    classname,
-                    classBeingRedefined,
-                    protectionDomain,
-                    bufferToUse);
-            if (out != null) {
-                bufferToUse = out;
-                modified = true;
-            }
-        }
-        if (classBeingRedefined == null) {
-            for (TransformerManager manager : managers) {
+        try {
+            byte[] bufferToUse = classfileBuffer;
+            boolean modified = false;
+            for (TransformerManager manager : retransformManagers) {
                 byte[] out = manager.transform(loader,
                         classname,
                         classBeingRedefined,
@@ -435,12 +425,28 @@ public class NativeInstrumentation implements Instrumentation {
                     modified = true;
                 }
             }
-        }
+            if (classBeingRedefined == null) {
+                for (TransformerManager manager : managers) {
+                    byte[] out = manager.transform(loader,
+                            classname,
+                            classBeingRedefined,
+                            protectionDomain,
+                            bufferToUse);
+                    if (out != null) {
+                        bufferToUse = out;
+                        modified = true;
+                    }
+                }
+            }
 
-        if (modified) {
-            return bufferToUse;
-        } else {
-            return null;
+            if (modified) {
+                tmpTransformOutput = bufferToUse;
+            } else {
+                tmpTransformOutput = null;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            tmpTransformOutput = null;
         }
     }
 }

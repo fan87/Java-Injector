@@ -1,6 +1,8 @@
 #include <cstring>
 #include "me_fan87_javainjector_NativeInstrumentation.h"
 #include "jvmti.h"
+#include "thread"
+#include "mutex"
 #include "type_convert.h"
 
 
@@ -138,6 +140,10 @@ jstring error(JNIEnv *jnienv, const char* message) {
     fflush(stdout);
     return jnienv->NewStringUTF(message);
 }
+void error(const char* message) {
+    fprintf(stderr, "%s", message);
+    fflush(stdout);
+}
 jvmtiEnv* jvmti1 = nullptr;
 jvmtiEnv* GetJvmTiEnv(JNIEnv *jnienv) {
     if (jvmti1 == nullptr) {
@@ -167,6 +173,19 @@ jvmtiEnv* GetJvmTiEnv(JNIEnv *jnienv) {
     }
 
     return jvmti1;
+}
+JNIEnv * GetJniEnv() {
+    JavaVM *vm;
+    JNIEnv *jni;
+    jsize size;
+    if (JNI_GetCreatedJavaVMs(&vm, 1, &size) != JNI_OK || size != 1) {
+        error("Failed to GetCreatedJavaVMs");
+    }
+    jint result = vm->GetEnv((void**) &jni, JNI_VERSION_1_6);
+    if (result == JNI_EDETACHED) {
+        result = vm->AttachCurrentThread((void**) &jni, nullptr);
+    }
+    return jni;
 }
 
 
@@ -432,6 +451,8 @@ void Java_me_fan87_javainjector_NativeInstrumentation_redefineClasses0(JNIEnv *j
 
 jclass nativeInstrumentation;
 jmethodID transform;
+jfieldID transformOutput;
+std::mutex load_hook_mutex;
 
 void ClassFileLoad(jvmtiEnv *jvmti_env,
                    JNIEnv* jni_env,
@@ -443,6 +464,7 @@ void ClassFileLoad(jvmtiEnv *jvmti_env,
                    const unsigned char* class_data,
                    jint* new_class_data_len,
                    unsigned char** new_class_data) {
+//    printf("Trying to transform %s  %p  %p   Thread: %ld\n", name, nativeInstrumentation, transform, std::this_thread::get_id());
     if (nativeInstrumentation == nullptr) {
         printf("Class not found! Loading %s\n", name);
         *new_class_data_len = class_data_len;
@@ -457,7 +479,8 @@ void ClassFileLoad(jvmtiEnv *jvmti_env,
     }
     jbyteArray jbyteArray1 = jni_env->NewByteArray(class_data_len);
     jni_env->SetByteArrayRegion(jbyteArray1, 0, class_data_len, (signed char*)class_data);
-    jbyteArray out = (jbyteArray) jni_env->CallStaticObjectMethod(nativeInstrumentation, transform, loader, jni_env->NewStringUTF(name), class_being_redefined, protection_domain, jbyteArray1);
+    jni_env->CallStaticVoidMethod(nativeInstrumentation, transform, loader, jni_env->NewStringUTF(name), class_being_redefined, protection_domain, jbyteArray1);
+    jbyteArray out = (jbyteArray)jni_env->GetStaticObjectField(nativeInstrumentation, transformOutput);
     if (out == nullptr) {
         return;
     }
@@ -473,7 +496,16 @@ void Java_me_fan87_javainjector_NativeInstrumentation_init(JNIEnv *env, jclass) 
     jvmtienv->SetEventNotificationMode(JVMTI_ENABLE, JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, nullptr);
 
     nativeInstrumentation = env->FindClass("me/fan87/javainjector/NativeInstrumentation");
-    transform = env->GetStaticMethodID(nativeInstrumentation, "transform", "(Ljava/lang/ClassLoader;Ljava/lang/String;Ljava/lang/Class;Ljava/security/ProtectionDomain;[B)[B");
+    if (nativeInstrumentation == nullptr) {
+        error(env, "NativeInstrumentation is null!");
+        return;
+    }
+    transformOutput = env->GetStaticFieldID(nativeInstrumentation, "tmpTransformOutput", "[B");
+    transform = env->GetStaticMethodID(nativeInstrumentation, "transform", "(Ljava/lang/ClassLoader;Ljava/lang/String;Ljava/lang/Class;Ljava/security/ProtectionDomain;[B)V");
+    if (transform == nullptr) {
+        error(env, "Transform method is null!");
+        return;
+    }
 }
 
 jobjectArray Java_me_fan87_javainjector_NativeInstrumentation_getAllLoadedClasses0(JNIEnv *env, jclass clazz) {

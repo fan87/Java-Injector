@@ -276,7 +276,6 @@ void Java_me_fan87_javainjector_NativeInstrumentation_retransformClasses0(JNIEnv
     }
 
     if (errorCode != JVMTI_ERROR_NONE) {
-        printf("Asdf %d\n", errorCode);
         createAndThrowThrowableFromJVMTIErrorCode(jnienv, errorCode);
     }
 

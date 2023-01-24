@@ -463,7 +463,6 @@ void ClassFileLoad(jvmtiEnv *jvmti_env,
                    const unsigned char* class_data,
                    jint* new_class_data_len,
                    unsigned char** new_class_data) {
-//    printf("Trying to transform %s  %p  %p   Thread: %ld\n", name, nativeInstrumentation, transform, std::this_thread::get_id());
     if (nativeInstrumentation == nullptr) {
         printf("Class not found! Loading %s\n", name);
         *new_class_data_len = class_data_len;

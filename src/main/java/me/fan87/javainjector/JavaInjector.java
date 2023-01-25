@@ -58,10 +58,10 @@ public class JavaInjector {
         byte[] bytes;
         if (OSUtils.isWindows()) {
             extension = ".dll";
-            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("native_injector_windows.dll")));
+            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("native-injector.dll")));
         } else {
             extension = ".so";
-            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("libnative_injector_linux.so")));
+            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("libnative-injector.so")));
         }
         File outputFile = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID() + extension);
         FileOutputStream outputStream = new FileOutputStream(outputFile);
@@ -76,7 +76,7 @@ public class JavaInjector {
         byte[] bytes;
         if (OSUtils.isWindows()) {
             extension = ".dll";
-            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("injection_target_windows.dll")));
+            bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("injection-target-windows.dll")));
         } else {
             extension = ".so";
             bytes = readAllBytes(Objects.requireNonNull(JavaInjector.class.getClassLoader().getResourceAsStream("libinjection_target_linux.so")));

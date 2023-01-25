@@ -1,0 +1,9 @@
+
+#ifndef INJECTION_TARGET_WINDOWS_DLLMAIN_H
+#define INJECTION_TARGET_WINDOWS_DLLMAIN_H
+
+
+#include "jni.h"
+#include "windows.h"
+
+#endif //INJECTION_TARGET_WINDOWS_DLLMAIN_H

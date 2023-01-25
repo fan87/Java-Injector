@@ -23,18 +23,15 @@ tasks {
 
     register<Copy>("copyInjectorLib") {
         group = "native"
-        if (isWindows()) {
-            TODO("Windows is not yet supported")
-        } else {
-            dependsOn(":native-injector-linux:build")
-            File(project(":native-injector-linux").buildDir, "libs/").listFiles()?.let { from(it.first()) }
-        }
+        dependsOn(":native-injector:build")
+        File(project(":native-injector").buildDir, "lib/main/debug/").listFiles()?.let { from(it.first()) }
         into(sourceSets.main.get().resources.sourceDirectories.first().absolutePath)
     }
     register<Copy>("copyInjectionTarget") {
         group = "native"
         if (isWindows()) {
-            TODO("Windows is not yet supported")
+            dependsOn(":injection-target-windows:build")
+            File(project(":injection-target-windows").buildDir, "lib/main/debug").listFiles()?.let { from(it.first()) }
         } else {
             dependsOn(":injection-target-linux:build")
             File(project(":injection-target-linux").buildDir, "libs/").listFiles()?.let { from(it.first()) }
@@ -45,12 +42,8 @@ tasks {
 
     register<Copy>("copyNativeAgent") {
         group = "native"
-        if (isWindows()) {
-            TODO("Windows is not yet supported")
-        } else {
-            dependsOn(":native-agent-linux:build")
-            File(project(":native-agent-linux").buildDir, "libs/").listFiles()?.let { from(it.first()) }
-        }
+        dependsOn(":native-agent-native:build")
+        File(project(":native-agent-native").buildDir, "lib/main/debug").listFiles()?.filter { it.name.endsWith(".dll") || it.name.endsWith(".so") }?.let { from(it.first()) }
         into(project("native-agent").sourceSets.main.get().resources.sourceDirectories.first().absolutePath)
 
     }

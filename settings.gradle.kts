@@ -1,8 +1,18 @@
 rootProject.name = "java-injector"
+
+fun isWindows(): Boolean = "Windows" in System.getProperty("os.name")
+
+
 include("test-program")
 include("test-inject-target")
-include("native-injector-linux")
 include("common")
-include("injection-target-linux")
 include("native-agent")
-include("native-agent-linux")
+include("native-agent-native")
+include("native-injector")
+
+if (isWindows()) {
+    include("injection-target-windows")
+} else {
+    include("injection-target-linux")
+}
+

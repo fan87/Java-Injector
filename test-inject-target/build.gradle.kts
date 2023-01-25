@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
 }
+java {
+}
 
 tasks.jar {
     manifest {

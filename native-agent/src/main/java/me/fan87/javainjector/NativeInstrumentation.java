@@ -249,10 +249,10 @@ public class NativeInstrumentation implements Instrumentation {
         byte[] bytes;
         if (OSUtils.isWindows()) {
             extension = ".dll";
-            bytes = readAllBytes(Objects.requireNonNull(NativeInstrumentation.class.getClassLoader().getResourceAsStream("native-agent-windows.dll")));
+            bytes = readAllBytes(Objects.requireNonNull(NativeInstrumentation.class.getClassLoader().getResourceAsStream("native-agent-native.dll")));
         } else {
             extension = ".so";
-            bytes = readAllBytes(Objects.requireNonNull(NativeInstrumentation.class.getClassLoader().getResourceAsStream("libnative_agent_linux.so")));
+            bytes = readAllBytes(Objects.requireNonNull(NativeInstrumentation.class.getClassLoader().getResourceAsStream("libnative-agent-native.so")));
         }
         File outputFile = new File(System.getProperty("java.io.tmpdir"), UUID.randomUUID() + extension);
         FileOutputStream outputStream = new FileOutputStream(outputFile);

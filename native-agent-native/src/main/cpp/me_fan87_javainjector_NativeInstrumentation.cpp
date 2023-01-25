@@ -5,8 +5,6 @@
 #include "mutex"
 #include "type_convert.h"
 
-
-
 jboolean
 checkForAndClearThrowable(  JNIEnv *    jnienv) {
     jboolean result = (*jnienv).ExceptionCheck();

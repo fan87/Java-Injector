@@ -405,7 +405,7 @@ public class NativeInstrumentation implements Instrumentation {
     public static byte[] tmpTransformOutput = null;
 
     // WARNING: the static native code knows the name & signature of this method
-    private static void
+    private static synchronized void
     transform(ClassLoader loader,
               String classname,
               Class<?> classBeingRedefined,

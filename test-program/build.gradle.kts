@@ -3,7 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-group = "me.fan87"
+group = "com.github.fan87.Java-Injector"
 version = "1.0-SNAPSHOT"
 
 repositories {

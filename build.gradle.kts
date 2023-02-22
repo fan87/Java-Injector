@@ -5,7 +5,7 @@ plugins {
     id("maven-publish")
 }
 
-group = "me.fan87"
+group = "com.github.fan87.Java-Injector"
 version = "1.0-SNAPSHOT"
 
 fun isWindows(): Boolean = "Windows" in System.getProperty("os.name")

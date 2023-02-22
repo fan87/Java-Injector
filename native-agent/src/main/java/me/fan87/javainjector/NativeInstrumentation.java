@@ -13,6 +13,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.jar.JarFile;
 
 public class NativeInstrumentation implements Instrumentation {
@@ -401,6 +402,7 @@ public class NativeInstrumentation implements Instrumentation {
     private static List<TransformerManager> managers = new ArrayList<>();
     private static List<TransformerManager> retransformManagers = new ArrayList<>();
 
+    public static ReentrantLock lock = new ReentrantLock();
 
     public static byte[] tmpTransformOutput = null;
 
@@ -412,6 +414,7 @@ public class NativeInstrumentation implements Instrumentation {
               ProtectionDomain protectionDomain,
               byte[] classfileBuffer) {
         try {
+            lock.lock();
             byte[] bufferToUse = classfileBuffer;
             boolean modified = false;
             for (TransformerManager manager : retransformManagers) {
@@ -447,6 +450,8 @@ public class NativeInstrumentation implements Instrumentation {
         } catch (Throwable e) {
             e.printStackTrace();
             tmpTransformOutput = null;
+        } finally {
+            lock.unlock();
         }
     }
 }

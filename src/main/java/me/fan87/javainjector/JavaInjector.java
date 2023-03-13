@@ -3,6 +3,7 @@ package me.fan87.javainjector;
 import me.fan87.javainjector.utils.OSUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.jar.Attributes;
@@ -23,7 +24,7 @@ public class JavaInjector {
             File outputFile = new File(System.getProperty("java.io.tmpdir") + "/" + variableName);
             outputFile.createNewFile();
             FileOutputStream outputStream = new FileOutputStream(outputFile);
-            outputStream.write(value.getBytes());
+            outputStream.write(value.getBytes(StandardCharsets.UTF_8));
             outputStream.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
